@@ -1,35 +1,37 @@
-export default class App {
-    constructor() {
-      this.calculateRandom = () => Math.floor(Math.random() * 16);
-    }
-  
-    getRandomGoblin() {
-      if (!this.goblin) this.goblin = document.getElementById('goblin');
-      if (!this.box) this.box = document.getElementsByClassName('box');
-      this.random = this.getRandom();
-      for (const element of this.box) {
-        if (element.getAttribute('data-id') === this.random.toString()) {
-          if (this.prevElement) this.prevElement.removeChild(this.goblin);
-          else this.goblin.classList.remove('hide');
-          element.appendChild(this.goblin);
-          this.prevElement = element;
-          return;
-        }
-      }
-    }
-  
-    getRandom() {
-      let randomize = this.calculateRandom();
-      while (randomize === this.random) {
-        randomize = this.calculateRandom();
-      }
-      return randomize;
-    }
-  
-    start() {
-      setInterval(() => this.getRandomGoblin(), 500);
+import goblinImg from '../img/goblin.png';
+
+export default class Rungoblin {
+  constructor(field, hole) {
+    this.field = document.getElementById(`${field}`);
+    this.boxes = [...this.field.querySelectorAll(`.${hole}`)];
+    this.activeBox = null;
+  }
+
+  getRandom() {
+    const random = Math.floor(Math.random() * this.boxes.length);
+    if (random === this.activeBox) {
+      this.getRandom();
+    } else {
+      this.activeBox = random;
     }
   }
-  
-  const app = new App();
-  app.start();
+
+  showGoblin() {
+    if (document.getElementById('goblin')) {
+      document.getElementById('goblin').remove();
+    }
+
+    this.getRandom();
+    const goblin = new Image();
+    goblin.src = goblinImg;
+    goblin.id = 'goblin';
+    goblin.classList.add('goblin');
+    this.boxes[this.activeBox].appendChild(goblin);
+  }
+
+  showGoblinInterval(speed) {
+    setInterval(() => {
+      this.showGoblin();
+    }, speed);
+  }
+}

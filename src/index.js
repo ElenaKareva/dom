@@ -1,2 +1,7 @@
+import Rungoblin from './js/app';
 import './css/style.css';
-import './js/app';
+
+window.onload = () => {
+  const randomize = new Rungoblin('field', 'hole');
+  randomize.showGoblinInterval(600);
+};
